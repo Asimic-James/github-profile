@@ -26,9 +26,11 @@ const App: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [repos, setRepos] = useState<Repo[]>([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
     setError("");
+    setLoading(true);
     try {
       const userRes = await fetch(`https://api.github.com/users/${username}`);
       if (!userRes.ok) throw new Error("User not found");
@@ -44,6 +46,8 @@ const App: React.FC = () => {
       setError(err.message);
       setUser(null);
       setRepos([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,6 +69,7 @@ const App: React.FC = () => {
         Search
       </button>
 
+      {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {user && (
